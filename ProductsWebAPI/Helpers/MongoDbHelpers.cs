@@ -18,5 +18,11 @@ namespace ProductsWebAPI.Helpers
         {
             return GetMongoDatabase().GetCollection<ProductsModel>("Products");
         }
+
+        public static void ClearDatabase()
+        {
+            var emptyFilter = Builders<ProductsModel>.Filter.Empty;
+            GetProductsCollection().DeleteMany(emptyFilter);
+        }
     }
 }

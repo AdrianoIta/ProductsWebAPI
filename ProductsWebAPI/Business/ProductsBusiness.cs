@@ -7,14 +7,7 @@ namespace ProductsWebAPI.Business
 {
     public class ProductsBusiness : IProductsBusiness
     {
-        private readonly IProductsValidator ProductsValidator;
-
         public ProductsBusiness() { }
-
-        protected ProductsBusiness(IProductsValidator productsValidator)
-        {
-            ProductsValidator = productsValidator;
-        }
 
         public void AddProducts(ProductsModel product)
         {
@@ -23,6 +16,7 @@ namespace ProductsWebAPI.Business
             ProductsValidator.ValidateRequiredFields(product);
             ProductsValidator.ProductAreDuplicated(product, existentProducts.ToList());
 
+            product.ProductId = Guid.NewGuid().ToString();
             MongoDbHelpers.GetProductsCollection().InsertOne(product);
         }
 
@@ -30,7 +24,7 @@ namespace ProductsWebAPI.Business
         {
             var collection = MongoDbHelpers.GetProductsCollection();
 
-            var filter = Builders<ProductsModel>.Filter.Eq("Id", id);
+            var filter = Builders<ProductsModel>.Filter.Eq("ProductId", id);
 
             var result = collection.DeleteOne(filter);
 
@@ -41,7 +35,7 @@ namespace ProductsWebAPI.Business
         {
             var collection = MongoDbHelpers.GetProductsCollection();
 
-            var filter = Builders<ProductsModel>.Filter.Eq("Id", id);
+            var filter = Builders<ProductsModel>.Filter.Eq("ProductId", id);
 
             var product = collection.Find(filter).First();
 
@@ -57,11 +51,11 @@ namespace ProductsWebAPI.Business
             return collection;
         }
 
-        public void UpdateProduct(ProductsModel product)
+        public long UpdateProduct(ProductsModel product)
         {
             var collection = MongoDbHelpers.GetProductsCollection();
 
-            var filter = Builders<ProductsModel>.Filter.Eq("Id", product.Id);
+            var filter = Builders<ProductsModel>.Filter.Eq("ProductId", product.ProductId);
             var update = Builders<ProductsModel>.Update;
             var updates = new List<UpdateDefinition<ProductsModel>>();
 
@@ -72,7 +66,11 @@ namespace ProductsWebAPI.Business
             if (!string.IsNullOrEmpty(product.Category))
                 updates.Add(update.Set("Category", product.Category));
 
-            collection.UpdateOne(filter, update.Combine(updates));
+            var updatedRecord = collection.UpdateOne(filter, update.Combine(updates));
+
+            return updatedRecord.ModifiedCount;
         }
+
+       
     }
 }

@@ -10,7 +10,7 @@ namespace ProductsWebAPI.Business
 
         void AddProducts(ProductsModel product);
 
-        void UpdateProduct(ProductsModel product);
+        long UpdateProduct(ProductsModel product);
 
         void DeleteProductById(string id);
     }

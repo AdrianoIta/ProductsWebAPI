@@ -6,9 +6,8 @@ namespace ProductsWebAPI.Models
 {
     public class ProductsModel
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
+        public ObjectId Id { get; set; }
+        public string ProductId { get; set; }
         public string ProductName { get; set; }
         public string Category { get; set; }
         public decimal UnitPrice { get; set; }
