@@ -1,10 +1,8 @@
-using Xunit;
-using Moq;
-using System;
-using ProductsWebAPI.Models;
 using ProductsWebAPI.Business;
+using ProductsWebAPI.Models;
+using System;
 using System.Linq;
-using ProductsWebAPI.Helpers;
+using Xunit;
 
 namespace ProductsWebAPI.Test
 {

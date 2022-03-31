@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MongoDB.Driver;
 using ProductsWebAPI.Business;
 using ProductsWebAPI.Models;
-using Swashbuckle.Examples;
 using Swashbuckle.Swagger.Annotations;
-using System.Net;
 
 namespace ProductsWebAPI.Controllers
 {
