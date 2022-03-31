@@ -3,7 +3,7 @@ using ProductsWebAPI.Models;
 
 namespace ProductsWebAPI.Validators
 {
-    public static class ProductsValidator 
+    public static class ProductsValidator
     {
         public static void ValidateRequiredFields(ProductsModel products)
         {
@@ -31,10 +31,16 @@ namespace ProductsWebAPI.Validators
                 throw new ArgumentNullException("The product was not deleted due to not exist.");
         }
 
-        public static void ProductsExists(List<ProductsModel> products) 
+        public static void ProductsExists(List<ProductsModel> products)
         {
             if (!products.Any())
                 throw new ArgumentNullException("No products found.");
+        }
+
+        public static void ProductIdAreEmpty(string? productId)
+        {
+            if (string.IsNullOrEmpty(productId))
+                throw new ArgumentNullException("ProductId are required");
         }
     }
 }

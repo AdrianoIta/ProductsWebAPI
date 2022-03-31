@@ -51,17 +51,17 @@ namespace ProductsWebAPI.Controllers
         ///
         ///     POST /Products
         ///     {
-        ///        "productId": 1
+        ///        "productId": "a0f605b2-911c-4892-a3b1-514d2a66cd90"
         ///     }
         ///
         /// </remarks>
         /// <param name="id"></param>
         /// <returns>Return a specific product</returns>
         /// <response code="200">Returns one single product successfully</response>
-        /// <response code="400">Product not found</response>
+        /// <response code="500">Missing a mandatory argument or invalid format</response>
         [HttpGet("{id}")]
         [SwaggerResponse(StatusCodes.Status200OK)]
-        [SwaggerResponse(StatusCodes.Status400BadRequest)]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError)]
         public IActionResult GetProductById(string id)
         {
             try
@@ -70,9 +70,9 @@ namespace ProductsWebAPI.Controllers
 
                 return Ok(product);
             }
-            catch (NullReferenceException)
+            catch (InvalidOperationException)
             {
-                return NotFound("Product not found.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Product not found.");
             }
         }
 
@@ -92,10 +92,12 @@ namespace ProductsWebAPI.Controllers
         /// </remarks>
         /// <returns>Returns a success message</returns>
         /// <response code="200">Successfully saved</response>
-        /// <response code="400">Missing a mandatory argument</response>
+        /// <response code="400">Null arguments</response>
+        /// <response code="500">Product duplicated</response>
         [HttpPost]
         [SwaggerResponse(StatusCodes.Status200OK)]
         [SwaggerResponse(StatusCodes.Status400BadRequest)]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError)]
         public IActionResult AddProducts(ProductsModel product)
         {
             try
@@ -104,11 +106,11 @@ namespace ProductsWebAPI.Controllers
 
                 return Ok("Product successfully created");
             }
-            catch (ArgumentNullException)
+            catch (NullReferenceException)
             {
-                return BadRequest("One more arguments are empty or null.");
+                return StatusCode(StatusCodes.Status400BadRequest, "One more arguments are empty or null.");
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -122,6 +124,7 @@ namespace ProductsWebAPI.Controllers
         ///
         ///     PUT /Products
         ///     {
+        ///          "productId": "a0f605b2-911c-4892-a3b1-514d2a66cd90",
         ///          "productName": "Monitor",
         ///          "category": "Computer parts",
         ///          "unitPrice": 200
@@ -156,7 +159,7 @@ namespace ProductsWebAPI.Controllers
         ///
         ///     Delete /Products
         ///     {
-        ///          "id": "1",
+        ///          "productId": "a0f605b2-911c-4892-a3b1-514d2a66cd90",
         ///     }
         ///
         /// </remarks>

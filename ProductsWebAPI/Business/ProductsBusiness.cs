@@ -54,23 +54,29 @@ namespace ProductsWebAPI.Business
         public long UpdateProduct(ProductsModel product)
         {
             var collection = MongoDbHelpers.GetProductsCollection();
-
             var filter = Builders<ProductsModel>.Filter.Eq("ProductId", product.ProductId);
             var update = Builders<ProductsModel>.Update;
             var updates = new List<UpdateDefinition<ProductsModel>>();
 
+            ProductsValidator.ProductIdAreEmpty(product.ProductId);
+            FieldsToBeUpdated(product, update, updates);
+
+            var updatedRecord = collection.UpdateOne(filter, update.Combine(updates));
+
+            if (updatedRecord.ModifiedCount <= 0)
+                throw new Exception("Product not updated, check the arguments and try again.");
+
+            return updatedRecord.ModifiedCount;
+        }
+
+        private static void FieldsToBeUpdated(ProductsModel product, UpdateDefinitionBuilder<ProductsModel> update, List<UpdateDefinition<ProductsModel>> updates)
+        {
             if (!string.IsNullOrEmpty(product.ProductName))
                 updates.Add(update.Set("ProductName", product.ProductName));
             if (product.UnitPrice > 0)
                 updates.Add(update.Set("UnitPrice", product.UnitPrice));
             if (!string.IsNullOrEmpty(product.Category))
                 updates.Add(update.Set("Category", product.Category));
-
-            var updatedRecord = collection.UpdateOne(filter, update.Combine(updates));
-
-            return updatedRecord.ModifiedCount;
         }
-
-       
     }
 }
